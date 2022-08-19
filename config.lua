@@ -1,31 +1,14 @@
 --[[
- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
- `lvim` is the global options object
+lvim is the global options object
+
+Linters should be
+filled in as strings with either
+a global executable or a path to
+an executable
 ]]
+-- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
 
--- Enable powershell as your default shell
-vim.opt.shell = "pwsh.exe -NoLogo"
-vim.opt.shellcmdflag =
-"-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
-vim.cmd [[
-		let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
-		let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
-		set shellquote= shellxquote=
-  ]]
-
--- Set a compatible clipboard manager
-vim.g.clipboard = {
-  copy = {
-    ["+"] = "win32yank.exe -i --crlf",
-    ["*"] = "win32yank.exe -i --crlf",
-  },
-  paste = {
-    ["+"] = "win32yank.exe -o --lf",
-    ["*"] = "win32yank.exe -o --lf",
-  },
-}
-
--- custom global variables
+-- custom options
 vim.opt.cmdheight = 1
 
 -- general
@@ -39,6 +22,8 @@ lvim.colorscheme = "onedarker"
 lvim.leader = "space"
 -- add your own keymapping
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+-- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
+-- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 -- unmap a default keymapping
 -- vim.keymap.del("n", "<C-Up>")
 -- override a default keymapping
@@ -74,27 +59,29 @@ lvim.builtin.which_key.mappings["t"] = {
   w = { "<cmd>Trouble workspace_diagnostics<cr>", "Workspace Diagnostics" },
 }
 
+-- TODO: User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
 lvim.builtin.alpha.active = false
 -- lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.notify.active = true
-lvim.builtin.terminal.active = false
--- lvim.builtin.terminal.shell = "pwsh.exe -NoLogo"
-
--- nvim-tree has some performance issues on windows, see kyazdani42/nvim-tree.lua#549
-lvim.builtin.nvimtree.setup.diagnostics.enable = nil
-lvim.builtin.nvimtree.setup.filters.custom = nil
-lvim.builtin.nvimtree.setup.git.enable = nil
-lvim.builtin.nvimtree.setup.update_cwd = nil
-lvim.builtin.nvimtree.setup.update_focused_file.update_cwd = nil
+lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
-lvim.builtin.nvimtree.setup.renderer.highlight_git = nil
-lvim.builtin.nvimtree.setup.renderer.icons.show.git = nil
+lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
   "c",
+  "go",
   "lua",
+  "tsx",
+  "vue",
+  "css",
+  "scss",
+  "html",
+  "json",
+  "python",
+  "javascript",
+  "typescript",
 }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
@@ -103,10 +90,17 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- generic LSP settings
 
 -- -- make sure server will always be installed even if the server is in skipped_servers list
--- lvim.lsp.installer.setup.ensure_installed = {
---     "sumeko_lua",
---     "jsonls",
--- }
+lvim.lsp.installer.setup.ensure_installed = {
+  "html",
+  "cssls",
+  "jsonls",
+  "pyright",
+  "tsserver",
+  "denols",
+  "volar",
+  "gopls",
+}
+
 -- -- change UI setting of `LspInstallInfo`
 -- -- see <https://github.com/williamboman/nvim-lsp-installer#default-configuration>
 -- lvim.lsp.installer.setup.ui.check_outdated_servers_on_open = false
@@ -117,13 +111,20 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- }
 
 -- ---@usage disable automatic installation of servers
--- lvim.lsp.automatic_servers_installation = false
+-- lvim.lsp.installer.setup.automatic_installation = false
 
 -- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
 -- ---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
 -- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
 -- local opts = {} -- check the lspconfig documentation for a list of all possible options
 -- require("lvim.lsp.manager").setup("pyright", opts)
+local lspconfig = require "lspconfig"
+lspconfig.tsserver.setup {
+  root_dir = lspconfig.util.root_pattern("package.json"),
+}
+lspconfig.denols.setup {
+  root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+}
 
 -- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
 -- ---`:LvimInfo` lists which server(s) are skipped for the current filetype
@@ -147,7 +148,7 @@ code_actions.setup {
   { name = "eslint_d" },
 }
 
--- set a formatter, this will override the language server formatting capabilities (if it exists)
+-- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
   { name = "prettierd" },
@@ -183,7 +184,7 @@ lvim.plugins = {
   },
   {
     "tzachar/cmp-tabnine",
-    run = "powershell ./install.ps1",
+    run = "./install.sh",
     requires = "hrsh7th/nvim-cmp",
     event = "InsertEnter",
   },
