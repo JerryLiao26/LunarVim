@@ -78,8 +78,8 @@ lvim.builtin.which_key.mappings["t"] = {
 lvim.builtin.alpha.active = false
 -- lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.notify.active = true
-lvim.builtin.terminal.active = false
--- lvim.builtin.terminal.shell = "pwsh.exe -NoLogo"
+lvim.builtin.terminal.active = true
+lvim.builtin.terminal.shell = "pwsh.exe -NoLogo"
 
 -- nvim-tree has some performance issues on windows, see kyazdani42/nvim-tree.lua#549
 lvim.builtin.nvimtree.setup.diagnostics.enable = nil
