@@ -124,6 +124,7 @@ lspconfig.tsserver.setup {
 }
 lspconfig.denols.setup {
   root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+  single_file_support = false, -- Prevent from starting with tsserver
 }
 
 -- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
