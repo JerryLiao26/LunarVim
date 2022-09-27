@@ -118,8 +118,9 @@ lvim.lsp.installer.setup.ensure_installed = {
   "cssls",
   "jsonls",
   "pyright",
-  "tsserver",
-  "denols",
+  -- ensure_installed should not contain anything that's in skipped_servers
+  -- "tsserver",
+  -- "denols",
   "volar",
   "gopls",
 }
@@ -134,21 +135,22 @@ lvim.lsp.installer.setup.ensure_installed = {
 -- }
 
 -- ---@usage disable automatic installation of servers
--- lvim.lsp.automatic_servers_installation = false
+-- lvim.lsp.installer.setup.automatic_installation = false
 
 -- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
 -- ---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
--- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tailwindcss", "tsserver", "denols" })
 -- local opts = {} -- check the lspconfig documentation for a list of all possible options
 -- require("lvim.lsp.manager").setup("pyright", opts)
 local lspconfig = require "lspconfig"
-lspconfig.tsserver.setup {
+local lsp_manager = require "lvim.lsp.manager"
+lsp_manager.setup("tsserver", {
   root_dir = lspconfig.util.root_pattern("package.json"),
-}
-lspconfig.denols.setup {
+})
+lsp_manager.setup("denols", {
   root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
   single_file_support = false, -- Prevent from starting with tsserver
-}
+})
 
 -- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
 -- ---`:LvimInfo` lists which server(s) are skipped for the current filetype
