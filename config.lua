@@ -59,6 +59,12 @@ lvim.builtin.which_key.mappings["t"] = {
   w = { "<cmd>Trouble workspace_diagnostics<cr>", "Workspace Diagnostics" },
 }
 
+-- Use 'd' beacause it's near 'e'
+lvim.builtin.which_key.mappings["d"] = { "<cmd>SymbolsOutline<cr>", "Symbols" }
+
+-- Remove default keymappings
+lvim.builtin.which_key.mappings[";"] = nil
+
 -- TODO: User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
 lvim.builtin.alpha.active = false
@@ -208,6 +214,12 @@ lvim.plugins = {
   {
     "folke/trouble.nvim",
     cmd = "TroubleToggle",
+  },
+  {
+    "simrat39/symbols-outline.nvim",
+    config = function()
+      require('symbols-outline').setup()
+    end
   },
 }
 
