@@ -217,6 +217,13 @@ lvim.plugins = {
       require("nvim-ts-autotag").setup()
     end,
   },
+  {
+    "akinsho/git-conflict.nvim",
+    tag = "*",
+    config = function()
+      require('git-conflict').setup()
+    end,
+  },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
